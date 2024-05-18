@@ -1,0 +1,48 @@
+{
+  "type": "excalidraw",
+  "version": 2,
+  "source": "https://marketplace.visualstudio.com/items?itemName=pomdtr.excalidraw-editor",
+  "elements": [
+    {
+      "id": "3mXG8AgixLB3UBNbn4aXe",
+      "type": "text",
+      "x": 569.8568344116211,
+      "y": 115.11198425292969,
+      "width": 378.3397216796875,
+      "height": 125,
+      "angle": 0,
+      "strokeColor": "#1e1e1e",
+      "backgroundColor": "transparent",
+      "fillStyle": "solid",
+      "strokeWidth": 2,
+      "strokeStyle": "solid",
+      "roughness": 1,
+      "opacity": 100,
+      "groupIds": [],
+      "frameId": null,
+      "roundness": null,
+      "seed": 1793522555,
+      "version": 223,
+      "versionNonce": 252096757,
+      "isDeleted": false,
+      "boundElements": null,
+      "updated": 1715977653679,
+      "link": null,
+      "locked": false,
+      "text": "- idade dos deputados\n- media de idade dos deputados\n\n- quantidade de deputado por partido\n- quantidade de deputado por estado",
+      "fontSize": 20,
+      "fontFamily": 1,
+      "textAlign": "left",
+      "verticalAlign": "top",
+      "baseline": 118,
+      "containerId": null,
+      "originalText": "- idade dos deputados\n- media de idade dos deputados\n\n- quantidade de deputado por partido\n- quantidade de deputado por estado",
+      "lineHeight": 1.25
+    }
+  ],
+  "appState": {
+    "gridSize": null,
+    "viewBackgroundColor": "#ffffff"
+  },
+  "files": {}
+}
