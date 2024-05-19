@@ -25,7 +25,7 @@ async fn main() -> Result<()> {
     let mut deputies_list: VecDeque<ParliamentaryLink> = VecDeque::new();
     let mut page: u8 = 1;
     let mut still_get_link: bool = true;
-    let threads_amount: usize = 12;
+    let threads_amount: usize = 20;
 
     while still_get_link == true {
         let format_url = format!(
@@ -125,8 +125,13 @@ async fn main() -> Result<()> {
 }
 
 async fn date_of_birth(url: &str) -> String {
-    let response_html = reqwest::get(url).await.unwrap().text().await.unwrap();
-    let document = Html::parse_document(&response_html);
+    let mut response = reqwest::get(url).await.unwrap();
+    
+    while response.status() == 504 {
+        response = reqwest::get(url).await.unwrap();
+    }
+
+    let document = Html::parse_document(&response.text().await.unwrap());
     let mut date = "";
 
     let selector = Selector::parse("ul.informacoes-deputado").unwrap();
