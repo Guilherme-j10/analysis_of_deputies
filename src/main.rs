@@ -1,11 +1,16 @@
 use std::{
     collections::{HashMap, VecDeque},
+    fs::{self, File},
+    io::{BufWriter, Write},
+    path::Path,
     sync::Arc,
 };
 
 use anyhow::Result;
+use chrono::Datelike;
 use reqwest;
 use scraper::{selectable::Selectable, Html, Selector};
+use serde::{Deserialize, Serialize};
 use tokio::sync::mpsc;
 
 #[derive(Debug)]
@@ -14,7 +19,7 @@ struct ParliamentaryLink {
     link: String,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 struct FinalParliametaryData {
     name: String,
     date_of_birth: String,
@@ -25,7 +30,35 @@ async fn main() -> Result<()> {
     let mut deputies_list: VecDeque<ParliamentaryLink> = VecDeque::new();
     let mut page: u8 = 1;
     let mut still_get_link: bool = true;
-    let threads_amount: usize = 20;
+    let threads_amount: usize = 40;
+    let file_source_location = Path::new("./output.json");
+
+    if file_source_location.exists() {
+        let file_content = fs::read_to_string(file_source_location).unwrap();
+        let deputies_content: Vec<FinalParliametaryData> =
+            serde_json::from_str(&file_content).unwrap();
+        let year: i32 = chrono::Local::now().year();
+        let mut sum_years: i32 = 0;
+
+        for deputie in &deputies_content {
+            let date_of: i32 = deputie
+                .date_of_birth
+                .split("/")
+                .collect::<Vec<&str>>()
+                .get(2)
+                .unwrap()
+                .parse::<i32>()
+                .unwrap();
+            let year = year - date_of;
+            sum_years += year;
+        }
+
+        println!(
+            "a média de idade dos bostis é: {}",
+            sum_years / deputies_content.len() as i32
+        );
+        return Ok(());
+    }
 
     while still_get_link == true {
         let format_url = format!(
@@ -114,19 +147,27 @@ async fn main() -> Result<()> {
     }
 
     drop(tx);
+    let mut final_result: Vec<FinalParliametaryData> = Vec::new();
+
     while let Some(data) = rx.recv().await {
         println!(
             "nome {} - data de nascimento: {}",
             data.name, data.date_of_birth
         );
+        final_result.push(data);
     }
+
+    let file = File::create(file_source_location).unwrap();
+    let mut writer = BufWriter::new(file);
+    serde_json::to_writer(&mut writer, &final_result).unwrap();
+    writer.flush().unwrap();
 
     Ok(())
 }
 
 async fn date_of_birth(url: &str) -> String {
     let mut response = reqwest::get(url).await.unwrap();
-    
+
     while response.status() == 504 {
         response = reqwest::get(url).await.unwrap();
     }
